@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const routes = require('./routes');
 
+const { ValidationError } = require('sequelize');
 // isProduction variable set to true when in production
 const { environment } = require('./config');
 const isProduction = environment === 'production';
@@ -21,7 +22,7 @@ app.use(express.json());
 
 // Security middleware
 
-if(!isProduction) {
+if (!isProduction) {
     //enable cors in development
     app.use(cors());
 }
@@ -46,6 +47,38 @@ app.use(
 
 
 app.use(routes);
+
+
+// Catch unhandled requests and forward to error handler
+app.use((_req, _res, next) => {
+    const err = new Error("The requested resource couldn't be found.");
+    err.title = "Resource Not Found";
+    err.errors = ["The requested resource couldn't be found."];
+    err.status = 404;
+    next(err);
+});
+
+// Process sequelize errors
+app.use((err, _req, _res, next) => {
+    // check if error is a Sequelize error
+    if (err instanceof ValidationError) {
+        err.errors = err.errors.map((e) => e.message);
+        err.title = "Validation error";
+    }
+    next(err);
+});
+
+// Error formater
+app.use((err, _res, res, _next) => {
+    res.status(err.stats || 500);
+    console.error(err);
+    res.json({
+        title: err.title || 'Server Error',
+        message: err.message,
+        errors: err.errors,
+        stack: isProduction ? null : err.stack
+    });
+});
 
 
 module.exports = app;
