@@ -7,23 +7,6 @@ const { User } = require('../../db/models');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
 
-
-// Sign up
-router.post(
-    '/',
-    validateSignup,
-    async (req, res) => {
-        const { email, password, username } = req.body;
-        const user = await User.signup({ email, username, password });
-
-        await setTokenCookie(res, user);
-
-        return res.json({
-            user: user
-        });
-    }
-);
-
 const validateSignup = [
     check('email')
         .exists({ checkFalsy: true })
@@ -43,5 +26,22 @@ const validateSignup = [
         .withMessage('Password must be 6 characters or more.'),
     handleValidationErrors
 ];
+
+// Sign up
+router.post(
+    '/',
+    validateSignup,
+    async (req, res) => {
+        const { email, password, username } = req.body;
+        const user = await User.signup({ email, username, password });
+
+        await setTokenCookie(res, user);
+
+        return res.json({
+            user: user
+        });
+    }
+);
+
 
 module.exports = router;
