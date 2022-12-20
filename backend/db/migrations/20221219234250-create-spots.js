@@ -1,4 +1,10 @@
 'use strict';
+
+const { options } = require('../../routes');
+
+if (process.env.NODE_ENV === 'production') {
+  options.schema = process.env.SCHEMA;
+}
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -11,7 +17,7 @@ module.exports = {
       },
       ownerId: {
         type: Sequelize.INTEGER,
-        allowNull: false, 
+        allowNull: false,
       },
       address: {
         type: Sequelize.STRING,
@@ -59,9 +65,10 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       }
-    });
+    }, options);
   },
   async down(queryInterface, Sequelize) {
+    options.tableName = 'spots'
     await queryInterface.dropTable('spots');
   }
 };
