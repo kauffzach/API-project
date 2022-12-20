@@ -15,7 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   Spot.init({
     ownerId: {
-      type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     address: {
       type: DataTypes.STRING,
@@ -28,23 +29,36 @@ module.exports = (sequelize, DataTypes) => {
     },
     state: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     country: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     lat: {
-      type: DataTypes.DECIMAL(3, 7),
+      type: DataTypes.DECIMAL,
       validate: {
-        min: -90,
-        max: 90,
+        min: {
+          msg: 'Value cannot be less than -180',
+          args: -90,
+        },
+        max: {
+          msg: 'Value cannot be greater than 180',
+          args: 90
+        }
       }
     },
     lng: {
-      type: DataTypes.DECIMAL(3, 7),
+      type: DataTypes.DECIMAL,
       validate: {
-        min: -180,
-        max: 180
+        min: {
+          msg: 'Value cannot be less than -180',
+          args: -180,
+        },
+        max: {
+          msg: 'Value cannot be greater than 180',
+          args: 180
+        }
       }
     },
     name: {
@@ -52,7 +66,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true,
       validate: {
-        len: [0, 50]
+        len: {
+          msg: 'Name must be less than 50 characters',
+          args: [0, 50]
+        },
       }
     },
     description: {
@@ -60,7 +77,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     price: {
-      type: DataTypes.NUMERIC,
+      type: DataTypes.DECIMAL,
       allowNull: false,
     }
   }, {

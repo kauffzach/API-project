@@ -10,7 +10,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       ownerId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false, 
       },
       address: {
         type: Sequelize.STRING,
@@ -30,10 +31,10 @@ module.exports = {
         allowNull: false
       },
       lat: {
-        type: Sequelize.DECIMAL(3, 7),
+        type: Sequelize.DECIMAL,
       },
       lng: {
-        type: Sequelize.DECIMAL(3, 7),
+        type: Sequelize.DECIMAL,
       },
       name: {
         type: Sequelize.STRING(50),
@@ -45,7 +46,7 @@ module.exports = {
         allowNull: false,
       },
       price: {
-        type: Sequelize.NUMERIC,
+        type: Sequelize.DECIMAL,
         allowNull: false,
       },
       createdAt: {
